@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System dyspozytorski - Zarządzanie użytkownikami</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 20px;
+    }
+    .container {
+      max-width: 1200px;
+    }
+    .panel {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(0, 123, 255, 0.1);
+      cursor: pointer;
+    }
+    .action-buttons {
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Pasek nawigacji -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index') }}">System dyspozytorski</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- Lewa strona nawigacji -->
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('index') }}">Linie transportowe</a>
+            </li>
+            {% if user_role == 'admin' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_magazyny') }}">
+                <i class="fas fa-warehouse me-1"></i> Magazyny
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{{ url_for('admin_users') }}">
+                <i class="fas fa-users me-1"></i> Użytkownicy
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+          <!-- Prawa strona nawigacji -->
+          <div class="d-flex align-items-center">
+            <span class="me-3">
+              <i class="fas fa-user me-1"></i> {{ username }}
+              {% if user_role == 'admin' %}
+              <span class="badge bg-danger">Administrator</span>
+              {% else %}
+              <span class="badge bg-primary">Dyspozytor</span>
+              {% endif %}
+            </span>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary btn-sm">
+              <i class="fas fa-sign-out-alt me-1"></i> Wyloguj
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Panel zarządzania użytkownikami -->
+    <div class="panel">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Zarządzanie użytkownikami</h3>
+        <button id="btn-add-user" class="btn btn-primary">
+          <i class="fas fa-plus me-1"></i> Dodaj użytkownika
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Nazwa użytkownika</th>
+              <th>Rola</th>
+              <th>Magazyn</th>
+              <th class="text-end">Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="users-list">
+            {% for username, user_data in users.items() %}
+            <tr data-username="{{ username }}">
+              <td>{{ username }}</td>
+              <td>
+                {% if user_data.role == 'admin' %}
+                <span class="badge bg-danger">Administrator</span>
+                {% else %}
+                <span class="badge bg-primary">Dyspozytor</span>
+                {% endif %}
+              </td>
+              <td>{{ user_data.magazyn or '-' }}</td>
+              <td class="text-end action-buttons">
+                <button class="btn btn-sm btn-primary btn-edit-user"
+                        data-username="{{ username }}"
+                        data-role="{{ user_data.role }}"
+                        data-magazyn="{{ user_data.magazyn or '' }}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                {% if username != 'admin' and username != session.username %}
+                <button class="btn btn-sm btn-danger btn-delete-user" data-username="{{ username }}">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Modal dodawania/edycji użytkownika -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="userModalTitle">Dodaj użytkownika</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="user-form">
+              <div class="mb-3">
+                <label for="username" class="form-label">Nazwa użytkownika</label>
+                <input type="text" class="form-control" id="username" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Hasło</label>
+                <input type="password" class="form-control" id="password">
+                <small id="password-hint" class="text-muted">Pozostaw puste, jeśli nie chcesz zmieniać hasła.</small>
+              </div>
+              <div class="mb-3">
+                <label for="role" class="form-label">Rola</label>
+                <select class="form-select" id="role">
+                  <option value="admin">Administrator</option>
+                  <option value="dyspozytor">Dyspozytor</option>
+                </select>
+              </div>
+              <div class="mb-3" id="magazyn-container" style="display: none;">
+                <label for="user-magazyn" class="form-label">Magazyn</label>
+                <select class="form-select" id="user-magazyn">
+                  {% for magazyn in magazyny %}
+                  <option value="{{ magazyn }}">{{ magazyn }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-primary" id="save-user">Zapisz</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal potwierdzenia usunięcia użytkownika -->
+    <div class="modal fade" id="deleteUserConfirmModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Potwierdź usunięcie</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Czy na pewno chcesz usunąć użytkownika <strong id="delete-username"></strong>?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-danger" id="confirm-delete-user">Usuń</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- Skrypty -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Funkcja pomocnicza do ukrywania/pokazywania pola magazynu
+      function toggleMagazynField() {
+        const role = document.getElementById('role').value;
+        const magazynContainer = document.getElementById('magazyn-container');
+        if (role === 'dyspozytor') {
+          magazynContainer.style.display = 'block';
+        } else {
+          magazynContainer.style.display = 'none';
+          document.getElementById('user-magazyn').value = '';
+        }
+      }
+      
+      // Dodaj obsługę zmiany roli
+      const roleSelect = document.getElementById('role');
+      if (roleSelect) {
+        roleSelect.addEventListener('change', toggleMagazynField);
+      }
+      
+      // Ukryj podpowiedź dla hasła domyślnie
+      const passwordHint = document.getElementById('password-hint');
+      if (passwordHint) {
+        passwordHint.style.display = 'none';
+      }
+      
+      // Obsługa przycisku "Dodaj użytkownika"
+      const btnAddUser = document.getElementById('btn-add-user');
+      if (btnAddUser) {
+        btnAddUser.addEventListener('click', function() {
+          document.getElementById('userModalTitle').textContent = 'Dodaj użytkownika';
+          document.getElementById('user-form').reset();
+          document.getElementById('username').readOnly = false;
+          document.getElementById('password').required = true;
+          passwordHint.style.display = 'none';
+          toggleMagazynField();
+          const modal = new bootstrap.Modal(document.getElementById('userModal'));
+          modal.show();
+        });
+      }
+      
+      // Obsługa przycisków "Edytuj użytkownika"
+      document.querySelectorAll('.btn-edit-user').forEach(button => {
+        button.addEventListener('click', function() {
+          const username = this.getAttribute('data-username');
+          const role = this.getAttribute('data-role');
+          const magazyn = this.getAttribute('data-magazyn');
+          document.getElementById('userModalTitle').textContent = 'Edytuj użytkownika';
+          document.getElementById('username').value = username;
+          document.getElementById('username').readOnly = true;
+          document.getElementById('password').value = '';
+          document.getElementById('password').required = false;
+          passwordHint.style.display = 'block';
+          document.getElementById('role').value = role;
+          document.getElementById('user-magazyn').value = magazyn;
+          toggleMagazynField();
+          const modal = new bootstrap.Modal(document.getElementById('userModal'));
+          modal.show();
+        });
+      });
+      
+      // Obsługa przycisków "Usuń użytkownika"
+      document.querySelectorAll('.btn-delete-user').forEach(button => {
+        button.addEventListener('click', function() {
+          const username = this.getAttribute('data-username');
+          document.getElementById('delete-username').textContent = username;
+          const modal = new bootstrap.Modal(document.getElementById('deleteUserConfirmModal'));
+          modal.show();
+          document.getElementById('confirm-delete-user').setAttribute('data-username', username);
+        });
+      });
+      
+      // Obsługa przycisku "Zapisz użytkownika"
+      const saveUserBtn = document.getElementById('save-user');
+      if (saveUserBtn) {
+        saveUserBtn.addEventListener('click', function() {
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+          const role = document.getElementById('role').value;
+          const magazyn = document.getElementById('user-magazyn').value;
+          if (!username) {
+            alert('Nazwa użytkownika nie może być pusta');
+            return;
+          }
+          if (document.getElementById('username').readOnly) {
+            // Edycja istniejącego użytkownika
+            const userData = { username: username, role: role };
+            if (password) { userData.password = password; }
+            if (role === 'dyspozytor') {
+              if (!magazyn) {
+                alert('Wybierz magazyn dla dyspozytora');
+                return;
+              }
+              userData.magazyn = magazyn;
+            }
+            fetch('/api/users', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                window.location.reload();
+              } else {
+                alert('Błąd podczas aktualizacji użytkownika: ' + data.error);
+              }
+            })
+            .catch(error => {
+              console.error('Błąd podczas aktualizacji użytkownika:', error);
+              alert('Wystąpił błąd podczas aktualizacji użytkownika');
+            });
+          } else {
+            if (!password) {
+              alert('Hasło jest wymagane dla nowego użytkownika');
+              return;
+            }
+            const userData = { username: username, password: password, role: role };
+            if (role === 'dyspozytor') {
+              if (!magazyn) {
+                alert('Wybierz magazyn dla dyspozytora');
+                return;
+              }
+              userData.magazyn = magazyn;
+            }
+            fetch('/api/users', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                window.location.reload();
+              } else {
+                alert('Błąd podczas dodawania użytkownika: ' + data.error);
+              }
+            })
+            .catch(error => {
+              console.error('Błąd podczas dodawania użytkownika:', error);
+              alert('Wystąpił błąd podczas dodawania użytkownika');
+            });
+          }
+        });
+      }
+      
+      // Obsługa przycisku "Usuń użytkownika" (potwierdzenie)
+      const confirmDeleteUserBtn = document.getElementById('confirm-delete-user');
+      if (confirmDeleteUserBtn) {
+        confirmDeleteUserBtn.addEventListener('click', function() {
+          const username = this.getAttribute('data-username');
+          fetch('/api/users', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: username })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            } else {
+              alert('Błąd podczas usuwania użytkownika: ' + data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Błąd podczas usuwania użytkownika:', error);
+            alert('Wystąpił błąd podczas usuwania użytkownika');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

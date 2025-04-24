@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System dyspozytorski - Zarządzanie magazynami</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .panel {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            cursor: pointer;
+        }
+        .action-buttons {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">System dyspozytorski</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('index') }}">Linie transportowe</a>
+                        </li>
+                        {% if user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('admin_magazyny') }}">
+                                <i class="fas fa-warehouse me-1"></i> Magazyny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users me-1"></i> Użytkownicy
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">
+                            <i class="fas fa-user me-1"></i> 
+                            {{ username }} 
+                            {% if user_role == 'admin' %}
+                                <span class="badge bg-danger">Administrator</span>
+                            {% else %}
+                                <span class="badge bg-primary">Dyspozytor</span>
+                            {% endif %}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-sign-out-alt me-1"></i> Wyloguj
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Zarządzanie magazynami</h3>
+                <button id="btn-add-magazyn" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Dodaj magazyn
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 70%">Nazwa magazynu</th>
+                            <th style="width: 30%" class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody id="magazyny-list">
+                        {% for magazyn in magazyny %}
+                        <tr data-magazyn="{{ magazyn }}">
+                            <td>{{ magazyn }}</td>
+                            <td class="text-end action-buttons">
+                                <button class="btn btn-sm btn-primary btn-edit-magazyn" data-magazyn="{{ magazyn }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-delete-magazyn" data-magazyn="{{ magazyn }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal dodawania/edycji magazynu -->
+    <div class="modal fade" id="magazynModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="magazynModalTitle">Dodaj magazyn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="magazyn-form">
+                        <input type="hidden" id="old-magazyn-name">
+                        <div class="mb-3">
+                            <label for="magazyn-name" class="form-label">Nazwa magazynu</label>
+                            <input type="text" class="form-control" id="magazyn-name" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="save-magazyn">Zapisz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal potwierdzenia usunięcia -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potwierdź usunięcie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Czy na pewno chcesz usunąć magazyn <strong id="delete-magazyn-name"></strong>?</p>
+                    <p class="text-danger">Uwaga: Spowoduje to również usunięcie powiązanego użytkownika dyspozytora!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-magazyn">Usuń</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skrypty -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Obsługa dodawania nowego magazynu
+        document.getElementById('btn-add-magazyn').addEventListener('click', function() {
+            document.getElementById('magazynModalTitle').textContent = 'Dodaj magazyn';
+            document.getElementById('old-magazyn-name').value = '';
+            document.getElementById('magazyn-name').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('magazynModal'));
+            modal.show();
+        });
+        
+        // Obsługa edycji magazynu
+        document.querySelectorAll('.btn-edit-magazyn').forEach(button => {
+            button.addEventListener('click', function() {
+                const magazynName = this.getAttribute('data-magazyn');
+                
+                document.getElementById('magazynModalTitle').textContent = 'Edytuj magazyn';
+                document.getElementById('old-magazyn-name').value = magazynName;
+                document.getElementById('magazyn-name').value = magazynName;
+                
+                const modal = new bootstrap.Modal(document.getElementById('magazynModal'));
+                modal.show();
+            });
+        });
+        
+        // Obsługa usuwania magazynu
+        document.querySelectorAll('.btn-delete-magazyn').forEach(button => {
+            button.addEventListener('click', function() {
+                const magazynName = this.getAttribute('data-magazyn');
+                document.getElementById('delete-magazyn-name').textContent = magazynName;
+                
+                const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                modal.show();
+                
+                document.getElementById('confirm-delete-magazyn').setAttribute('data-magazyn', magazynName);
+            });
+        });
+        
+        // Zapisywanie magazynu (dodawanie/edycja)
+        document.getElementById('save-magazyn').addEventListener('click', function() {
+            const oldName = document.getElementById('old-magazyn-name').value;
+            const newName = document.getElementById('magazyn-name').value;
+            
+            if (!newName) {
+                alert('Nazwa magazynu nie może być pusta');
+                return;
+            }
+            
+            if (oldName) {
+                // Edycja istniejącego magazynu
+                fetch('/api/magazyny', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        old_name: oldName,
+                        new_name: newName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Błąd podczas aktualizacji magazynu: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd podczas aktualizacji magazynu:', error);
+                    alert('Wystąpił błąd podczas aktualizacji magazynu');
+                });
+            } else {
+                // Dodawanie nowego magazynu
+                fetch('/api/magazyny', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nazwa: newName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Błąd podczas dodawania magazynu: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd podczas dodawania magazynu:', error);
+                    alert('Wystąpił błąd podczas dodawania magazynu');
+                });
+            }
+        });
+        
+        // Potwierdzenie usunięcia magazynu
+        document.getElementById('confirm-delete-magazyn').addEventListener('click', function() {
+            const magazynName = this.getAttribute('data-magazyn');
+            
+            fetch('/api/magazyny', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nazwa: magazynName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Błąd podczas usuwania magazynu: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Błąd podczas usuwania magazynu:', error);
+                alert('Wystąpił błąd podczas usuwania magazynu');
+            });
+        });
+    </script>
+</body>
+</html>

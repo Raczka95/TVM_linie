@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System dyspozytorski - Logowanie</title>
+
+  <!-- Bootstrap (opcjonalnie, aby szybko użyć siatki i przycisków) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Ikony (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <style>
+    /* Tło z gradientem */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #53f 0%, #6df 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Karta logowania */
+    .login-card {
+      background-color: rgba(255, 255, 255, 0.15); /* półprzezroczyste tło */
+      backdrop-filter: blur(10px); /* efekt rozmycia tła */
+      border-radius: 10px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-card .icon-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* Ikona logowania */
+    .login-card .icon-container i {
+      font-size: 4rem;
+      color: #fff;
+      background: linear-gradient(135deg, #53f 0%, #6df 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Nagłówek */
+    .login-card h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #ffffff;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* Etykiety i pola formularza */
+    .form-label {
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .form-control {
+      border: none;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #333;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: none;
+      outline: 2px solid #6df;
+    }
+
+    /* Przycisk */
+    .btn-login {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #53f 0%, #6df 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(135deg, #6df 0%, #53f 100%);
+    }
+
+    /* Linki dolne */
+    .additional-options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .additional-options a {
+      font-size: 0.875rem;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .additional-options a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="icon-container">
+    <!-- Ikona użytkowników (możesz podmienić na dowolną) -->
+    <i class="fas fa-users"></i>
+  </div>
+  <h2>TVM Linie</h2>
+  {% if error %}
+    <div class="alert alert-danger" role="alert">{{ error }}</div>
+  {% endif %}
+  
+  <!-- Formularz logowania -->
+  <form method="POST" action="{{ url_for('login') }}">
+    <div class="mb-3">
+      <label for="username" class="form-label">Nazwa użytkownika</label>
+      <input 
+        type="text" 
+        class="form-control" 
+        id="username" 
+        name="username" 
+        required 
+        placeholder="Wpisz nazwę użytkownika" 
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Hasło</label>
+      <input 
+        type="password" 
+        class="form-control" 
+        id="password" 
+        name="password" 
+        required 
+        placeholder="Wpisz hasło" 
+      />
+    </div>
+    <button type="submit" class="btn-login">Zaloguj</button>
+  </form>
+  
+  <!-- Linki dodatkowe (opcjonalne) -->
+  <div class="additional-options">
+    <a href="#">Potrzebujesz konto ? Napisz do d.kurasz@tvm.net.pl</a>
+  </div>
+</div>
+
+<!-- Bootstrap (opcjonalny skrypt JS) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

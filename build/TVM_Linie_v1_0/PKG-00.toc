@@ -1,0 +1,438 @@
+('C:\\Users\\Damian '
+ 'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\TVM_Linie_v1_0.pkg',
+ {'BINARY': True,
+  'DATA': True,
+  'EXECUTABLE': True,
+  'EXTENSION': True,
+  'PYMODULE': True,
+  'PYSOURCE': True,
+  'PYZ': False,
+  'SPLASH': True,
+  'SYMLINK': False},
+ [('pyi-contents-directory _internal', '', 'OPTION'),
+  ('PYZ-00.pyz',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\PYZ-00.pyz',
+   'PYZ'),
+  ('struct',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\localpycs\\struct.pyc',
+   'PYMODULE'),
+  ('pyimod01_archive',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\localpycs\\pyimod01_archive.pyc',
+   'PYMODULE'),
+  ('pyimod02_importers',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\localpycs\\pyimod02_importers.pyc',
+   'PYMODULE'),
+  ('pyimod03_ctypes',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\localpycs\\pyimod03_ctypes.pyc',
+   'PYMODULE'),
+  ('pyimod04_pywin32',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\localpycs\\pyimod04_pywin32.pyc',
+   'PYMODULE'),
+  ('pyiboot01_bootstrap',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgutil',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
+   'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
+  ('pyi_rth_cryptography_openssl',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks\\pyi_rth_cryptography_openssl.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgres',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
+   'PYSOURCE'),
+  ('pyi_rth_setuptools',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
+   'PYSOURCE'),
+  ('app',
+   'C:\\Users\\Damian Kurasz\\Desktop\\Python\\Linie\\app.py',
+   'PYSOURCE'),
+  ('python313.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\python313.dll',
+   'BINARY'),
+  ('_lzma.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_lzma.pyd',
+   'EXTENSION'),
+  ('_bz2.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_bz2.pyd',
+   'EXTENSION'),
+  ('_decimal.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_decimal.pyd',
+   'EXTENSION'),
+  ('_hashlib.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_hashlib.pyd',
+   'EXTENSION'),
+  ('select.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\select.pyd',
+   'EXTENSION'),
+  ('_socket.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_socket.pyd',
+   'EXTENSION'),
+  ('unicodedata.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\unicodedata.pyd',
+   'EXTENSION'),
+  ('_overlapped.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_overlapped.pyd',
+   'EXTENSION'),
+  ('_ssl.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_ssl.pyd',
+   'EXTENSION'),
+  ('_queue.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_queue.pyd',
+   'EXTENSION'),
+  ('_ctypes.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_ctypes.pyd',
+   'EXTENSION'),
+  ('_multiprocessing.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_multiprocessing.pyd',
+   'EXTENSION'),
+  ('pyexpat.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\pyexpat.pyd',
+   'EXTENSION'),
+  ('_asyncio.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_asyncio.pyd',
+   'EXTENSION'),
+  ('_wmi.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_wmi.pyd',
+   'EXTENSION'),
+  ('grpc\\_cython\\cygrpc.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\grpc\\_cython\\cygrpc.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('google\\_upb\\_message.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google\\_upb\\_message.pyd',
+   'EXTENSION'),
+  ('_cffi_backend.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\_cffi_backend.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('cryptography\\hazmat\\bindings\\_rust.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography\\hazmat\\bindings\\_rust.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\md__mypyc.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\charset_normalizer\\md__mypyc.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('charset_normalizer\\md.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\charset_normalizer\\md.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('msgpack\\_cmsgpack.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\msgpack\\_cmsgpack.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('markupsafe\\_speedups.cp313-win_amd64.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\markupsafe\\_speedups.cp313-win_amd64.pyd',
+   'EXTENSION'),
+  ('_uuid.pyd',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\_uuid.pyd',
+   'EXTENSION'),
+  ('VCRUNTIME140.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\VCRUNTIME140.dll',
+   'BINARY'),
+  ('libcrypto-3.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\libcrypto-3.dll',
+   'BINARY'),
+  ('libssl-3.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\libssl-3.dll',
+   'BINARY'),
+  ('libffi-8.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\DLLs\\libffi-8.dll',
+   'BINARY'),
+  ('VCRUNTIME140_1.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\VCRUNTIME140_1.dll',
+   'BINARY'),
+  ('python3.dll',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\python3.dll',
+   'BINARY'),
+  ('templates\\admin_logs.html',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\templates\\admin_logs.html',
+   'DATA'),
+  ('templates\\admin_magazyny.html',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\templates\\admin_magazyny.html',
+   'DATA'),
+  ('templates\\admin_users.html',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\templates\\admin_users.html',
+   'DATA'),
+  ('templates\\index.html',
+   'C:\\Users\\Damian Kurasz\\Desktop\\Python\\Linie\\templates\\index.html',
+   'DATA'),
+  ('templates\\login.html',
+   'C:\\Users\\Damian Kurasz\\Desktop\\Python\\Linie\\templates\\login.html',
+   'DATA'),
+  ('grpc\\_cython\\_credentials\\roots.pem',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\grpc\\_cython\\_credentials\\roots.pem',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\LICENSE',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\LICENSE',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\RECORD',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\WHEEL',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\METADATA',
+   'DATA'),
+  ('google_api_core-2.24.0.dist-info\\top_level.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\google_api_core-2.24.0.dist-info\\top_level.txt',
+   'DATA'),
+  ('certifi\\cacert.pem',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\certifi\\cacert.pem',
+   'DATA'),
+  ('certifi\\py.typed',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\certifi\\py.typed',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\WHEEL',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\licenses\\LICENSE',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\licenses\\LICENSE',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\licenses\\LICENSE.APACHE',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\licenses\\LICENSE.APACHE',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\RECORD',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\licenses\\LICENSE.BSD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\licenses\\LICENSE.BSD',
+   'DATA'),
+  ('cryptography-44.0.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cryptography-44.0.0.dist-info\\METADATA',
+   'DATA'),
+  ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
+   'ipsum.txt',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\RECORD',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\WHEEL',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\METADATA',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\LICENSE',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\top_level.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\top_level.txt',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.0.0.dist-info\\REQUESTED',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\METADATA',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\METADATA',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\RECORD',
+   'DATA'),
+  ('werkzeug-3.1.3.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\werkzeug-3.1.3.dist-info\\RECORD',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\WHEEL',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\INSTALLER',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\LICENSE.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('werkzeug-3.1.3.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\werkzeug-3.1.3.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\entry_points.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\entry_points.txt',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\RECORD',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\LICENSE.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\METADATA',
+   'DATA'),
+  ('werkzeug-3.1.3.dist-info\\LICENSE.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\werkzeug-3.1.3.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\METADATA',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\RECORD',
+   'DATA'),
+  ('werkzeug-3.1.3.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\werkzeug-3.1.3.dist-info\\WHEEL',
+   'DATA'),
+  ('werkzeug-3.1.3.dist-info\\METADATA',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\werkzeug-3.1.3.dist-info\\METADATA',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\REQUESTED',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\REQUESTED',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\REQUESTED',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\REQUESTED',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\WHEEL',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\WHEEL',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\top_level.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\top_level.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\entry_points.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\entry_points.txt',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('setuptools\\_vendor\\wheel-0.43.0.dist-info\\INSTALLER',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\_vendor\\wheel-0.43.0.dist-info\\INSTALLER',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\LICENSE.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\itsdangerous-2.2.0.dist-info\\LICENSE.txt',
+   'DATA'),
+  ('flask-3.1.0.dist-info\\WHEEL',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\flask-3.1.0.dist-info\\WHEEL',
+   'DATA'),
+  ('MarkupSafe-3.0.2.dist-info\\RECORD',
+   'C:\\Users\\Damian '
+   'Kurasz\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\MarkupSafe-3.0.2.dist-info\\RECORD',
+   'DATA'),
+  ('base_library.zip',
+   'C:\\Users\\Damian '
+   'Kurasz\\Desktop\\Python\\Linie\\build\\TVM_Linie_v1_0\\base_library.zip',
+   'DATA')],
+ 'python313.dll',
+ False,
+ False,
+ False,
+ [],
+ None,
+ None,
+ None)

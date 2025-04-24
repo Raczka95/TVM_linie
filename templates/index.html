@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System dyspozytorski - Linie transportowe</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .calendar-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .zgloszenia-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .flatpickr-day.selected {
+            background: #007bff;
+            border-color: #007bff;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            cursor: pointer;
+        }
+        .badge-status {
+            font-size: 0.8rem;
+        }
+        .filter-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table th {
+            white-space: nowrap;
+        }
+        .magazyn-tile {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            background-color: #f8f9fa;
+        }
+        .magazyn-tile.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .magazyn-tiles-container {
+            margin-top: 15px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding: 5px;
+            border-top: 1px solid #eee;
+        }
+        @media (min-width: 992px) {
+            .table-col {
+                padding-left: 20px;
+            }
+        }
+        .flatpickr-day.has-new-zgloszenie {
+            background-color: rgba(255, 99, 71, 0.3); /* Czerwony z przezroczystością */
+            border-color: rgba(255, 99, 71, 0.5);
+        }
+        .flatpickr-day.has-new-zgloszenie:hover {
+            background-color: rgba(255, 99, 71, 0.5);
+        }
+        .flatpickr-day.all-assigned-zgloszenie {
+            background-color: rgba(50, 205, 50, 0.3); /* Zielony z przezroczystością */
+            border-color: rgba(50, 205, 50, 0.5);
+        }
+        .flatpickr-day.all-assigned-zgloszenie:hover {
+            background-color: rgba(50, 205, 50, 0.5);
+        }
+        .missing-arrival-indicator {
+            color: #dc3545;  /* czerwony kolor */
+            margin-left: 5px;
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* Dodaj styl dla tooltip */
+        .arrival-tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .arrival-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 150px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            font-weight: normal;
+        }
+        
+        .arrival-tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        
+        .arrival-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">System dyspozytorski</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Linie transportowe</a>
+                        </li>
+                        {% if user_role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_magazyny') }}">
+                                <i class="fas fa-warehouse me-1"></i> Magazyny
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users me-1"></i> Użytkownicy
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">
+                            <i class="fas fa-user me-1"></i> 
+                            {{ username }} 
+                            {% if user_role == 'admin' %}
+                                <span class="badge bg-danger">Administrator</span>
+                            {% else %}
+                                <span class="badge bg-primary">Dyspozytor - {{ user_magazyn }}</span>
+                            {% endif %}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-sign-out-alt me-1"></i> Wyloguj
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- Przeniesiona i uproszczona tabela przyjazdów - umieść ją pod listą magazynów w lewej kolumnie -->
+        <div class="col-lg-3 col-md-12">
+            <div class="calendar-container">
+                <h4 class="mb-3">Kalendarz</h4>
+                <div id="calendar"></div>
+                
+                <div class="d-grid gap-2 mt-3">
+                    {% if user_role == 'dyspozytor' %}
+                    <button id="btn-new-zgloszenie" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Dodaj nowe zgłoszenie
+                    </button>
+                    {% endif %}
+                </div>
+                
+                <!-- Kafelki magazynów -->
+                {% if user_role in ['dyspozytor', 'admin'] %}
+                <div class="magazyn-tiles-container mt-3">
+                    <small class="d-block mb-2 text-muted">Wybierz magazyny do wyświetlenia:</small>
+                    <div id="magazyn-tiles">
+                        {% if user_role == 'dyspozytor' %}
+                            {% for magazyn in user_magazyny %}
+                            <div class="magazyn-tile active" data-magazyn="{{ magazyn }}">{{ magazyn }}</div>
+                            {% endfor %}
+                        {% else %}
+                            {% for magazyn in magazyny %}
+                            <div class="magazyn-tile active" data-magazyn="{{ magazyn }}">{{ magazyn }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Uproszczona tabela przyjazdów -->
+                <div class="mt-4">
+                    <h5 class="mb-3">Przyjazdy na dzień <span id="selected-arrival-date" class="text-primary"></span></h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Godz. przyjazdu</th>
+                                    <th>Kierowca</th>
+                                    <th>Nr rej.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="przyjazdy-list">
+                                <!-- Dane będą wstawiane tutaj dynamicznie -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-przyjazdy" class="text-center p-2 d-none">
+                        <p class="text-muted small">Brak przyjazdów</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+            <!-- Prawa kolumna (pasek wyszukiwania i zgłoszenia) -->
+            <div class="col-lg-9 col-md-12 table-col">
+                <div class="main-content">
+                    <!-- Pasek wyszukiwania (zastępujący dropdown) -->
+                    <div class="filter-container">
+                        <div class="row align-items-center">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" id="search-input" class="form-control" placeholder="Wyszukaj według: magazyn wyjazd., magazyn końc., kierowca, nr rej...">
+                                    <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zgłoszenia (ze zwiększoną szerokością) -->
+                    <div class="zgloszenia-container">
+                        <h4 class="mb-3">
+                            Zgłoszenia na dzień <span id="selected-date" class="text-primary"></span>
+                        </h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Magazyn wyjazd.</th>
+                                        <th>Magazyn końc.</th>
+                                        <th>Linia</th>
+                                        <th>Godz. wyjazdu</th>
+                                        <th>Kierowca</th>
+                                        <th>Nr rej.</th>
+                                        <th>Status</th>
+                                        <th>Opis</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zgloszenia-list">
+                                    <!-- Dane będą wstawiane tutaj dynamicznie -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="no-zgloszenia" class="text-center p-3 d-none">
+                            <p class="text-muted">Brak zgłoszeń na wybrany dzień</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal dodawania nowego zgłoszenia -->
+    <div class="modal fade" id="newZgloszenieModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nowe zgłoszenie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="new-zgloszenie-form">
+                        <div class="mb-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="text" class="form-control" id="data" name="data" required readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="magazyn-wyjazdowy" class="form-label">Magazyn wyjazdowy</label>
+                            <select class="form-select" id="magazyn-wyjazdowy" name="magazyn-wyjazdowy" required>
+                                <option value="" selected disabled>Wybierz magazyn wyjazdowy</option>
+                                {% for magazyn in magazyny %}
+                                <option value="{{ magazyn }}">{{ magazyn }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="magazyn-koncowy" class="form-label">Magazyn końcowy</label>
+                            <select class="form-select" id="magazyn-koncowy" name="magazyn-koncowy" required>
+                                <option value="" selected disabled>Wybierz magazyn końcowy</option>
+                                {% for magazyn in magazyny %}
+                                <option value="{{ magazyn }}">{{ magazyn }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="linia" class="form-label">Linia</label>
+                            <select class="form-select" id="linia" name="linia" required>
+                                <option value="" selected disabled>Wybierz linię</option>
+                                {% for i in range(1, 11) %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="godzina-wyjazdu" class="form-label">Godzina wyjazdu</label>
+                            <input type="text" class="form-control" id="godzina-wyjazdu" name="godzina-wyjazdu" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="save-zgloszenie">Zapisz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal szczegółów zgłoszenia (zmodyfikowany) -->
+    <!-- Modal szczegółów zgłoszenia (zmodyfikowany) -->
+    <div class="modal fade" id="zgloszenieDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Szczegóły zgłoszenia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- Zmodyfikowany fragment modalu szczegółów zgłoszenia -->
+                <div class="modal-body">
+                    <form id="zgloszenie-details-form">
+                        <input type="hidden" id="zgloszenie-id">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="detail-data-edit" class="form-label">Data</label>
+                                <!-- Zamiana na pole edytowalne -->
+                                <input type="text" class="form-control" id="detail-data-edit">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="detail-godzina-wyjazdu" class="form-label">Godzina wyjazdu</label>
+                                <!-- Zamiana z pola tylko do odczytu na pole edytowalne -->
+                                <input type="text" class="form-control" id="detail-godzina-wyjazdu">
+                            </div>
+                        </div>
+                        
+                        <!-- Nowe pola dla daty i godziny przyjazdu -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="detail-data-przyjazdu" class="form-label">Data przyjazdu</label>
+                                <input type="text" class="form-control" id="detail-data-przyjazdu">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="detail-godzina-przyjazdu" class="form-label">Godzina przyjazdu</label>
+                                <input type="text" class="form-control" id="detail-godzina-przyjazdu">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Magazyn wyjazdowy</label>
+                                <p id="detail-magazyn-wyjazdowy" class="form-control-plaintext"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Magazyn końcowy</label>
+                                <p id="detail-magazyn-koncowy" class="form-control-plaintext"></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Linia</label>
+                            <p id="detail-linia" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dodane przez</label>
+                            <p id="detail-created-by" class="form-control-plaintext text-muted"></p>
+                        </div>
+                        <!-- Pola edytowalne tylko dla administratora -->
+                        {% if user_role in ['admin', 'dyspozytor'] %}
+                        <hr>
+                        <h6>Uzupełnij dane:</h6>
+                        <!-- Usunięte pole edycji godziny wyjazdu -->
+                        <div class="mb-3">
+                            <label for="detail-kierowca" class="form-label">Kierowca</label>
+                            <input type="text" class="form-control" id="detail-kierowca">
+                        </div>
+                        <div class="mb-3">
+                            <label for="detail-nr-rejestracyjny" class="form-label">Nr rejestracyjny</label>
+                            <input type="text" class="form-control" id="detail-nr-rejestracyjny">
+                        </div>
+                        <div class="mb-3">
+                            <label for="detail-opis" class="form-label">Opis / Uwagi</label>
+                            <textarea class="form-control" id="detail-opis" rows="3"></textarea>
+                        </div>
+                        {% else %}
+                        <hr>
+                        <h6>Dane uzupełnione przez dyspozytora głównego:</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Kierowca</label>
+                            <p id="detail-kierowca-view" class="form-control-plaintext text-muted"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nr rejestracyjny</label>
+                            <p id="detail-nr-rejestracyjny-view" class="form-control-plaintext text-muted"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Opis / Uwagi</label>
+                            <p id="detail-opis-view" class="form-control-plaintext text-muted"></p>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                    {% if user_role in ['admin', 'dyspozytor'] %}
+                    <!-- Przycisk usuwania zgłoszenia - dostępny tylko dla admina -->
+                    {% if user_role == 'admin' %}
+                    <button type="button" class="btn btn-danger" id="delete-zgloszenie">Usuń zgłoszenie</button>
+                    {% endif %}
+                    <!-- Przycisk aktualizacji zgłoszenia -->
+                    <button type="button" class="btn btn-primary" id="update-zgloszenie">Zapisz zmiany</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+      
+    
+        <!-- Skrypty -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/pl.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script>
+        <script>
+            // Inicjalizacja Socket.IO
+    const socket = io();
+    
+    // Nasłuchiwanie na nowe zgłoszenia
+    socket.on('new_zgloszenie', function(data) {
+        // Sprawdź czy zgłoszenie dotyczy aktualnie wybranej daty
+        if (data.data === selectedDate) {
+            loadZgloszenia(selectedDate);
+        }
+        // Dodatkowo odświeżamy podświetlenie w kalendarzu
+        refreshCalendarStatusHighlights();
+    });
+    
+    // Nasłuchiwanie na aktualizacje zgłoszeń
+    socket.on('update_zgloszenie', function(data) {
+        // Sprawdź czy aktualizacja dotyczy aktualnie wybranej daty
+        if (data.data === selectedDate) {
+            loadZgloszenia(selectedDate);
+        }
+        // Dodatkowo odświeżamy podświetlenie w kalendarzu
+        refreshCalendarStatusHighlights();
+    });
+    
+    // Nasłuchiwanie na aktualizacje statusów
+    socket.on('status_update', function() {
+        // Odświeżanie statusów kalendarza
+        refreshCalendarStatusHighlights();
+    });
+    
+    // Dane o magazynach i rolach
+    const userRole = '{{ user_role }}';
+    const userMagazyny = JSON.parse('{{ user_magazyny|tojson }}');
+    // Wybrane magazyny do filtrowania
+    let selectedMagazyny = [];
+    // Dla administratora, pobierz wszystkie magazyny
+    if (userRole === 'admin') {
+        const allMagazyny = JSON.parse('{{ magazyny|tojson }}');
+        selectedMagazyny = [...allMagazyny]; // Domyślnie wszystkie są zaznaczone
+    } else {
+        selectedMagazyny = [...userMagazyny]; // Dla dyspozytora, użyj przypisanych magazynów
+    }
+    
+    // Obsługa kafelków magazynów
+    const magazynTiles = document.querySelectorAll('.magazyn-tile');
+    if (magazynTiles.length > 0) {
+        magazynTiles.forEach(tile => {
+            tile.addEventListener('click', function() {
+                const magazyn = this.getAttribute('data-magazyn');
+                this.classList.toggle('active');
+                
+                if (this.classList.contains('active')) {
+                    // Dodaj magazyn do zaznaczonych
+                    if (!selectedMagazyny.includes(magazyn)) {
+                        selectedMagazyny.push(magazyn);
+                    }
+                } else {
+                    // Usuń magazyn z zaznaczonych
+                    selectedMagazyny = selectedMagazyny.filter(m => m !== magazyn);
+                }
+                
+                // Załaduj zgłoszenia z wybranymi magazynami
+                loadZgloszenia(selectedDate);
+                loadPrzyjazdy(selectedDate);
+                
+                // Odśwież podświetlenia w kalendarzu
+                refreshCalendarStatusHighlights();
+            });
+        });
+    }
+    
+    // Obsługa paska wyszukiwania
+    const searchInput = document.getElementById('search-input');
+    const clearSearch = document.getElementById('clear-search');
+    
+    searchInput.addEventListener('input', function() {
+        filterTable();
+    });
+    
+    clearSearch.addEventListener('click', function() {
+        searchInput.value = '';
+        filterTable();
+    });
+    
+    // Funkcja filtrująca tabelę
+    function filterTable() {
+        const searchValue = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#zgloszenia-list tr');
+        
+        let foundAny = false;
+        
+        rows.forEach(row => {
+            const magazynWyjazd = row.cells[0].textContent.toLowerCase();
+            const magazynKonc = row.cells[1].textContent.toLowerCase();
+            const kierowca = row.cells[4].textContent.toLowerCase();
+            const nrRej = row.cells[5].textContent.toLowerCase();
+            
+            // Sprawdź czy wiersz zawiera szukany tekst w którymkolwiek z pól
+            if (searchValue === '' || 
+                magazynWyjazd.includes(searchValue) || 
+                magazynKonc.includes(searchValue) || 
+                kierowca.includes(searchValue) || 
+                nrRej.includes(searchValue)) {
+                row.style.display = '';
+                foundAny = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Pokaż lub ukryj wiadomość o braku zgłoszeń
+        const noZgloszenia = document.getElementById('no-zgloszenia');
+        if (rows.length === 0 || !foundAny) {
+            noZgloszenia.classList.remove('d-none');
+            if (searchValue) {
+                noZgloszenia.querySelector('p').textContent = 'Brak zgłoszeń pasujących do wyszukiwania';
+            } else {
+                noZgloszenia.querySelector('p').textContent = 'Brak zgłoszeń na wybrany dzień';
+            }
+        } else {
+            noZgloszenia.classList.add('d-none');
+        }
+    }
+    
+    // Formatowanie daty do formatu YYYY-MM-DD
+    function formatDate(date) {
+        const d = new Date(date);
+        const month = '' + (d.getMonth() + 1);
+        const day = '' + d.getDate();
+        const year = d.getFullYear();
+        
+        return [year, month.padStart(2, '0'), day.padStart(2, '0')].join('-');
+    }
+    
+    // Inicjalizacja widoku
+    let selectedDate = getSavedDate();
+    document.getElementById('selected-date').textContent = selectedDate;
+    document.getElementById('selected-arrival-date').textContent = selectedDate;
+    
+    // Funkcja pobierająca statusy zgłoszeń dla zakresu dat
+    function fetchStatusesByDateRange(startDate, endDate) {
+        // Formatowanie dat do zapytania
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+        
+        // Budowanie URL z uwzględnieniem filtrowania magazynów
+        let url = `/api/zgloszenia-statusy?start=${formattedStartDate}&end=${formattedEndDate}`;
+        
+        // Dla dyspozytora dodaj parametry magazynów
+        if ((userRole === 'dyspozytor' || userRole === 'admin') && selectedMagazyny.length > 0) {
+            url += `&magazyny=${selectedMagazyny.join(',')}`;
+        }
+        
+        return fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || `Błąd serwera: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Błąd podczas pobierania statusów zgłoszeń:', error);
+                return {};
+            });
+    }
+    
+    // Globalny obiekt do przechowywania statusów zgłoszeń
+    let statusesByDate = {};
+    
+    // Funkcja aktualizująca datę w kalendarzu na podstawie statusów
+    function updateCalendarDates() {
+        // Jeśli kalendarz jest zainicjalizowany
+        if (calendar && calendar.days) {
+            // Pobierz wszystkie dni z kalendarza
+            const days = document.querySelectorAll('.flatpickr-day:not(.prevMonthDay):not(.nextMonthDay)');
+            
+            days.forEach(day => {
+                // Usuń poprzednie klasy
+                day.classList.remove('has-new-zgloszenie', 'all-assigned-zgloszenie');
+                
+                // Pobierz datę dla elementu
+                const dateAttr = day.getAttribute('aria-label');
+                if (!dateAttr) return;
+                
+                // Konwertuj datę do formatu YYYY-MM-DD
+                const dateObj = new Date(dateAttr);
+                const dateStr = formatDate(dateObj);
+                
+                // Sprawdź czy mamy statusy dla tej daty
+                if (statusesByDate[dateStr]) {
+                    const statuses = statusesByDate[dateStr];
+                    
+                    // Sprawdź czy istnieje status "Nowe"
+                    if (statuses.includes('Nowe')) {
+                        // Jeśli istnieje choć jedno zgłoszenie ze statusem "Nowe", podświetl na czerwono
+                        day.classList.add('has-new-zgloszenie');
+                    } else if (statuses.length > 0 && statuses.every(s => s === 'Przydzielone')) {
+                        // Jeśli wszystkie zgłoszenia mają status "Przydzielone", podświetl na zielono
+                        day.classList.add('all-assigned-zgloszenie');
+                    }
+                }
+            });
+        }
+    }
+    
+    // Inicjalizacja kalendarza
+    const calendar = flatpickr("#calendar", {
+        inline: true,
+        locale: "pl",
+        dateFormat: "Y-m-d",
+        defaultDate: getSavedDate(), // Użyj zapisanej daty jako domyślnej
+        onChange: function(selectedDates, dateStr) {
+            selectedDate = dateStr;
+            document.getElementById('selected-date').textContent = selectedDate;
+            document.getElementById('selected-arrival-date').textContent = selectedDate;
+            
+            // Zapisz datę do localStorage
+            saveSelectedDate(selectedDate);
+            
+            loadZgloszenia(selectedDate);
+            loadPrzyjazdy(selectedDate);
+        },
+        onMonthChange: function() {
+            refreshCalendarStatusHighlights(this);
+        },
+        onReady: function() {
+            refreshCalendarStatusHighlights(this);
+        }
+    });
+    
+    
+    // Inicjalizacja wyboru godziny
+    flatpickr("#godzina-wyjazdu", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+    
+    // Inicjalizacja wyboru godziny w modalu szczegółów
+    flatpickr("#detail-godzina-wyjazdu", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+    
+    // Inicjalizacja wyboru daty w modalu szczegółów
+    flatpickr("#detail-data-edit", {
+        dateFormat: "Y-m-d",
+        locale: "pl"
+    });
+    
+    // Inicjalizacja wyboru daty przyjazdu w modalu szczegółów
+    flatpickr("#detail-data-przyjazdu", {
+        dateFormat: "Y-m-d",
+        locale: "pl"
+    });
+    
+    // Inicjalizacja wyboru godziny przyjazdu w modalu szczegółów
+    flatpickr("#detail-godzina-przyjazdu", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+
+    // Zapisuje wybraną datę do localStorage
+    function saveSelectedDate(date) {
+        localStorage.setItem('selectedDate', date);
+    }
+
+    // Pobiera zapisaną datę z localStorage lub zwraca dzisiejszą datę
+    function getSavedDate() {
+        const savedDate = localStorage.getItem('selectedDate');
+        return savedDate || formatDate(new Date());
+    }
+    
+    // Funkcja odświeżająca statusy i kalendarz
+    function refreshCalendarStatusHighlights(calendarInstance) {
+        if (calendarInstance && calendarInstance.days) {
+            const days = document.querySelectorAll('.flatpickr-day:not(.prevMonthDay):not(.nextMonthDay)');
+            days.forEach(day => {
+                day.classList.remove('has-new-zgloszenie', 'all-assigned-zgloszenie');
+                const dateAttr = day.getAttribute('aria-label');
+                if (!dateAttr) return;
+                const dateObj = new Date(dateAttr);
+                const dateStr = formatDate(dateObj);
+                if (statusesByDate[dateStr]) {
+                    const statuses = statusesByDate[dateStr];
+                    if (statuses.includes('Nowe')) {
+                        day.classList.add('has-new-zgloszenie');
+                    } else if (statuses.length > 0 && statuses.every(s => s === 'Przydzielone')) {
+                        day.classList.add('all-assigned-zgloszenie');
+                    }
+                }
+            });
+        }
+    }
+    
+    
+    // Ładowanie zgłoszeń dla wybranej daty
+    function loadZgloszenia(date) {
+        // Dodaj parametr magazynu do zapytania
+        let url = `/api/zgloszenia?data=${date}`;
+        
+        // Dla dyspozytora dodaj parametry magazynów
+        if (userRole === 'dyspozytor') {
+            // Użyj tylko magazynów przypisanych do użytkownika
+            const validMagazyny = selectedMagazyny.filter(magazyn => userMagazyny.includes(magazyn));
+            
+            if (validMagazyny.length > 0) {
+                url += `&magazyny=${validMagazyny.join(',')}`;
+            }
+        }
+        if (userRole === 'admin' && selectedMagazyny.length > 0) {
+            url += `&magazyny=${selectedMagazyny.join(',')}`;
+        }
+        
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || `Błąd serwera: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const zgloszeniaList = document.getElementById('zgloszenia-list');
+                const noZgloszenia = document.getElementById('no-zgloszenia');
+                
+                zgloszeniaList.innerHTML = '';
+                
+                // Filtruj dane dla administratora
+                let filteredData = data;
+                if (userRole === 'admin' && selectedMagazyny.length > 0) {
+                    filteredData = data.filter(zgloszenie => 
+                        selectedMagazyny.includes(zgloszenie.magazyn_wyjazdowy) || 
+                        selectedMagazyny.includes(zgloszenie.magazyn_koncowy)
+                    );
+                }
+                
+                if (filteredData.length === 0) {
+                    noZgloszenia.classList.remove('d-none');
+                    noZgloszenia.querySelector('p').textContent = 'Brak zgłoszeń na wybrany dzień';
+                } else {
+                    noZgloszenia.classList.add('d-none');
+                    
+                    // Sortuj dane według godziny wyjazdu (od 00:00 do 23:59)
+                    filteredData.sort((a, b) => {
+                        if (!a.godzina_wyjazdu) return 1;
+                        if (!b.godzina_wyjazdu) return -1;
+                        return a.godzina_wyjazdu.localeCompare(b.godzina_wyjazdu);
+                    });
+                    
+                    filteredData.forEach(zgloszenie => {
+                        // Pomiń ukryte zgłoszenia
+                        if (zgloszenie.hidden) return;
+                        
+                        const row = document.createElement('tr');
+                        row.dataset.id = zgloszenie.id;
+                        
+                        let statusBadge = '';
+                        if (zgloszenie.status === 'Nowe') {
+                            statusBadge = '<span class="badge bg-warning badge-status">Nowe</span>';
+                        } else if (zgloszenie.status === 'Przydzielone') {
+                            statusBadge = '<span class="badge bg-success badge-status">Przydzielone</span>';
+                        }
+                        
+                        // Sprawdź czy data i godzina przyjazdu są uzupełnione
+                        const missingArrival = !zgloszenie.data_przyjazdu || !zgloszenie.godzina_przyjazdu;
+                        const arrivalIndicator = missingArrival ? 
+                            `<span class="arrival-tooltip">
+                                <i class="fas fa-exclamation-circle missing-arrival-indicator"></i>
+                                <span class="tooltip-text">Brak danych przyjazdu</span>
+                             </span>` : '';
+                        
+                        row.innerHTML = `
+                            <td>${zgloszenie.magazyn_wyjazdowy || '-'}</td>
+                            <td>${zgloszenie.magazyn_koncowy || '-'}</td>
+                            <td>${zgloszenie.linia || '-'}</td>
+                            <td>${zgloszenie.godzina_wyjazdu || '-'} ${arrivalIndicator}</td>
+                            <td>${zgloszenie.kierowca || '-'}</td>
+                            <td>${zgloszenie.nr_rejestracyjny || '-'}</td>
+                            <td>${statusBadge}</td>
+                            <td>${zgloszenie.opis || '-'}</td>
+                        `;
+                        
+                        // Dodaj event listener do wiersza tabeli
+                        row.addEventListener('click', () => showZgloszenieDetails(zgloszenie));
+                        
+                        zgloszeniaList.appendChild(row);
+                    });
+                    
+                    // Zastosuj aktualne filtrowanie po wczytaniu danych
+                    filterTable();
+                }
+            })
+            .catch(error => {
+                console.error('Błąd podczas ładowania zgłoszeń:', error);
+                const errorMessage = error.message || 'Nieznany błąd';
+                alert(`Wystąpił błąd podczas ładowania zgłoszeń: ${errorMessage}`);
+            });
+    }
+    
+    function loadPrzyjazdy(date) {
+        // Build URL for the API endpoint
+        let url = `/api/przyjazdy?data=${date}`;
+        
+        // For dispatchers, filter by assigned warehouses
+        if (userRole === 'dyspozytor') {
+            // Use only warehouses assigned to the user
+            const validMagazyny = selectedMagazyny.filter(magazyn => userMagazyny.includes(magazyn));
+            
+            if (validMagazyny.length > 0) {
+                url += `&magazyny=${validMagazyny.join(',')}`;
+            }
+        }
+        if (userRole === 'admin' && selectedMagazyny.length > 0) {
+            url += `&magazyny=${selectedMagazyny.join(',')}`;
+        }
+        
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        throw new Error(errData.error || `Błąd serwera: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const przyjazdyList = document.getElementById('przyjazdy-list');
+                const noPrzyjazdy = document.getElementById('no-przyjazdy');
+                
+                przyjazdyList.innerHTML = '';
+                
+                // Filtruj przyjazdy tylko dla magazynu końcowego równego wybranym magazynom
+                let filteredPrzyjazdy = data;
+                if (userRole === 'dyspozytor') {
+                    // Filtruj tylko te wpisy, gdzie magazyn końcowy jest jednym z wybranych magazynów
+                    filteredPrzyjazdy = data.filter(przyjazd => 
+                        selectedMagazyny.includes(przyjazd.magazyn_koncowy)
+                    );
+                }
+                if (userRole === 'admin' && selectedMagazyny.length > 0) {
+                    // Filtruj przyjazdy dla administratora
+                    filteredPrzyjazdy = data.filter(przyjazd => 
+                        selectedMagazyny.includes(przyjazd.magazyn_koncowy)
+                    );
+                }
+                
+                if (filteredPrzyjazdy.length === 0) {
+                    noPrzyjazdy.classList.remove('d-none');
+                } else {
+                    noPrzyjazdy.classList.add('d-none');
+                    
+                    // Sort by arrival time
+                    filteredPrzyjazdy.sort((a, b) => {
+                        if (!a.godzina_przyjazdu) return 1;
+                        if (!b.godzina_przyjazdu) return -1;
+                        return a.godzina_przyjazdu.localeCompare(b.godzina_przyjazdu);
+                    });
+                    
+                    filteredPrzyjazdy.forEach(przyjazd => {
+                        // Wyświetlamy tylko te przyjazdy, które mają magazyn końcowy w wybranych magazynach
+                        const row = document.createElement('tr');
+                        row.dataset.id = przyjazd.id;
+                        
+                        row.innerHTML = `
+                            <td>${przyjazd.godzina_przyjazdu || '-'}</td>
+                            <td>${przyjazd.kierowca || '-'}</td>
+                            <td>${przyjazd.nr_rejestracyjny || '-'}</td>
+                        `;
+                        
+                        // Add event listener to show details when row is clicked
+                        row.addEventListener('click', () => {
+                            fetch(`/api/zgloszenie/${przyjazd.id}`)
+                                .then(response => response.json())
+                                .then(zgloszenie => {
+                                    if (zgloszenie) {
+                                        showZgloszenieDetails(zgloszenie);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Błąd podczas pobierania szczegółów zgłoszenia:', error);
+                                });
+                        });
+                        
+                        przyjazdyList.appendChild(row);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Błąd podczas ładowania przyjazdów:', error);
+                alert(`Wystąpił błąd podczas ładowania przyjazdów: ${error.message}`);
+            });
+    }
+    
+    
+    
+    // Dodawanie nowego zgłoszenia
+    document.getElementById('btn-new-zgloszenie')?.addEventListener('click', function() {
+        document.getElementById('data').value = selectedDate;
+        
+        // Resetuj formularz
+        document.getElementById('new-zgloszenie-form').reset();
+        document.getElementById('data').value = selectedDate;
+        
+        // Ustaw domyślnie magazyn wyjazdowy, jeśli jest tylko jeden
+        if (userRole === 'dyspozytor' && userMagazyny.length === 1) {
+            const magazynWyjazdowySelect = document.getElementById('magazyn-wyjazdowy');
+            magazynWyjazdowySelect.value = userMagazyny[0];
+        }
+        
+        const modal = new bootstrap.Modal(document.getElementById('newZgloszenieModal'));
+        modal.show();
+    });
+    
+    // Zapisywanie nowego zgłoszenia
+    document.getElementById('save-zgloszenie')?.addEventListener('click', function() {
+        const data = document.getElementById('data').value;
+        const magazynWyjazdowy = document.getElementById('magazyn-wyjazdowy').value;
+        const magazynKoncowy = document.getElementById('magazyn-koncowy').value;
+        const linia = document.getElementById('linia').value;
+        const godzinaWyjazdu = document.getElementById('godzina-wyjazdu').value;
+        
+        // Walidacja formularza
+        if (!magazynWyjazdowy || !magazynKoncowy || !linia || !godzinaWyjazdu) {
+            alert('Wypełnij wszystkie wymagane pola');
+            return;
+        }
+        
+        // Sprawdź czy magazyn wyjazdowy nie jest taki sam jak końcowy
+        if (magazynWyjazdowy === magazynKoncowy) {
+            alert('Magazyn wyjazdowy nie może być taki sam jak końcowy');
+            return;
+        }
+        
+        // Przygotowanie danych do wysłania
+        const zgloszenie = {
+            data: data,
+            magazyn_wyjazdowy: magazynWyjazdowy,
+            magazyn_koncowy: magazynKoncowy,
+            linia: linia,
+            godzina_wyjazdu: godzinaWyjazdu
+        };
+        
+        // Wysłanie danych na serwer
+        fetch('/api/zgloszenie', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(zgloszenie)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Błąd podczas zapisywania zgłoszenia');
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                // Zamknięcie modalu
+                bootstrap.Modal.getInstance(document.getElementById('newZgloszenieModal')).hide();
+                
+                // Resetowanie formularza
+                document.getElementById('new-zgloszenie-form').reset();
+                
+                // Odświeżenie listy zgłoszeń
+                loadZgloszenia(selectedDate);
+            } else {
+                alert('Błąd podczas zapisywania zgłoszenia: ' + result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Błąd podczas wysyłania zgłoszenia:', error);
+            alert('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
+        });
+    });
+    
+    // Wyświetlanie szczegółów zgłoszenia - zmodyfikowana funkcja
+    // Wyświetlanie szczegółów zgłoszenia - zmodyfikowana funkcja
+    function showZgloszenieDetails(zgloszenie) {
+        console.log("Otwieranie szczegółów zgłoszenia:", zgloszenie);
+
+        // Set ID field
+        document.getElementById('zgloszenie-id').value = zgloszenie.id;
+        
+        // Set date field (editable)
+        let dateEditField = document.getElementById('detail-data-edit');
+        if (dateEditField) {
+            dateEditField.value = zgloszenie.data || '';
+        }
+        
+        // Set other basic fields
+        document.getElementById('detail-magazyn-wyjazdowy').textContent = zgloszenie.magazyn_wyjazdowy || '-';
+        document.getElementById('detail-magazyn-koncowy').textContent = zgloszenie.magazyn_koncowy || '-';
+        document.getElementById('detail-linia').textContent = zgloszenie.linia || '-';
+        document.getElementById('detail-created-by').textContent = zgloszenie.created_by || 'Brak danych';
+
+        // Editable fields for existing properties
+        let godzinaWyjazduField = document.getElementById('detail-godzina-wyjazdu');
+        if (godzinaWyjazduField) {
+            godzinaWyjazduField.value = zgloszenie.godzina_wyjazdu || '';
+        }
+
+        // Fields for arrival date and time
+        let dataPrzyjazdField = document.getElementById('detail-data-przyjazdu');
+        if (dataPrzyjazdField) {
+            dataPrzyjazdField.value = zgloszenie.data_przyjazdu || '';
+        }
+        
+        let godzinaPrzyjazdField = document.getElementById('detail-godzina-przyjazdu');
+        if (godzinaPrzyjazdField) {
+            godzinaPrzyjazdField.value = zgloszenie.godzina_przyjazdu || '';
+        }
+
+        let kierowcaField = document.getElementById('detail-kierowca');
+        if (kierowcaField) {
+            kierowcaField.value = zgloszenie.kierowca || '';
+        }
+
+        let nrRejField = document.getElementById('detail-nr-rejestracyjny');
+        if (nrRejField) {
+            nrRejField.value = zgloszenie.nr_rejestracyjny || '';
+        }
+
+        let opisField = document.getElementById('detail-opis');
+        if (opisField) {
+            opisField.value = zgloszenie.opis || '';
+        }
+
+        // Read-only fields if user doesn't have edit rights
+        let kierowcaView = document.getElementById('detail-kierowca-view');
+        if (kierowcaView) {
+            kierowcaView.textContent = zgloszenie.kierowca || 'Brak danych';
+        }
+
+        let nrRejView = document.getElementById('detail-nr-rejestracyjny-view');
+        if (nrRejView) {
+            nrRejView.textContent = zgloszenie.nr_rejestracyjny || 'Brak danych';
+        }
+
+        let opisView = document.getElementById('detail-opis-view');
+        if (opisView) {
+            opisView.textContent = zgloszenie.opis || 'Brak danych';
+        }
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('zgloszenieDetailsModal'));
+        modal.show();
+    }
+    
+    // Aktualizacja zgłoszenia - zmodyfikowana funkcja
+    document.getElementById('update-zgloszenie')?.addEventListener('click', function() {
+        const id = document.getElementById('zgloszenie-id').value;
+        const kierowca = document.getElementById('detail-kierowca').value;
+        const nrRejestracyjny = document.getElementById('detail-nr-rejestracyjny').value;
+        const opis = document.getElementById('detail-opis').value;
+        const godzinaWyjazdu = document.getElementById('detail-godzina-wyjazdu').value;
+        
+        // Get new fields
+        const data = document.getElementById('detail-data-edit').value;
+        const dataPrzyjazdu = document.getElementById('detail-data-przyjazdu').value;
+        const godzinaPrzyjazdu = document.getElementById('detail-godzina-przyjazdu').value;
+        
+        // Create update object with all fields
+        const zgloszenie = {
+            data: data,
+            kierowca: kierowca,
+            nr_rejestracyjny: nrRejestracyjny,
+            opis: opis,
+            godzina_wyjazdu: godzinaWyjazdu,
+            data_przyjazdu: dataPrzyjazdu,
+            godzina_przyjazdu: godzinaPrzyjazdu
+        };
+        
+        fetch(`/api/zgloszenie/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(zgloszenie)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Sukces!');
+                bootstrap.Modal.getInstance(document.getElementById('zgloszenieDetailsModal')).hide();
+                loadZgloszenia(selectedDate);
+                loadPrzyjazdy(selectedDate);
+            } else {
+                alert('Błąd: ' + (data.error || 'Nieznany błąd'));
+            }
+        })
+        .catch(error => {
+            console.error('Błąd fetch:', error);
+            alert('Wystąpił błąd: ' + error);
+        });
+    });
+    
+    // Kasowanie zgłoszenia (tylko dla administratora)
+    document.getElementById('delete-zgloszenie')?.addEventListener('click', function() {
+        const id = document.getElementById('zgloszenie-id').value;
+    
+        if (!id) {
+            alert('Nieprawidłowe ID zgłoszenia.');
+            return;
+        }
+    
+        if (!confirm('Czy na pewno chcesz usunąć to zgłoszenie?')) {
+            return;
+        }
+    
+        fetch(`/api/zgloszenie/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Zgłoszenie zostało usunięte.');
+                // Zamknij modal
+                bootstrap.Modal.getInstance(document.getElementById('zgloszenieDetailsModal')).hide();
+                // Odśwież listę dla wybranej daty
+                loadZgloszenia(selectedDate);
+                loadPrzyjazdy(selectedDate);
+            } else {
+                alert('Błąd podczas usuwania zgłoszenia: ' + (data.error || 'Nieznany błąd.'));
+            }
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Wystąpił błąd podczas usuwania zgłoszenia: ' + error);
+        });
+    });
+    
+    // Event listener for refresh arrivals button
+    document.getElementById('refresh-arrivals').addEventListener('click', function() {
+        loadPrzyjazdy(selectedDate);
+    });
+    
+    // Załaduj zgłoszenia po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dla admina załaduj wszystkie zgłoszenia
+        if (userRole === 'admin') {
+            loadZgloszenia(selectedDate);
+        } else {
+            // Dla dyspozytora ustaw domyślne magazyny
+            if (userMagazyny.length > 0) {
+                selectedMagazyny = [...userMagazyny]; // Kopia tablicy
+                loadZgloszenia(selectedDate);
+            }
+        }
+        
+        // Load arrivals for any user role
+        loadPrzyjazdy(selectedDate);
+    });
+        </script>
+    </body>
+    </html>
